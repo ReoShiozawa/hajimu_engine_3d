@@ -1,0 +1,16 @@
+{
+  "name": "engine_3d",
+  "version": "1.0.0",
+  "author": "Reo Shiozawa",
+  "description": "はじむ用 3D レンダリングエンジン — SDL2 + OpenGL 3.3 Core Profile + Blinn-Phong 照明 + OBJ ローダー",
+  "license": "MIT",
+  "repository": "https://github.com/ReoShiozawa/hajimu_engine_3d",
+  "build": "make",
+  "output": "build/engine_3d.hjp",
+  "install_dir": "~/.hajimu/plugins/engine_3d/",
+  "dependencies": {
+    "sdl2": ">=2.0",
+    "opengl": ">=3.3"
+  },
+  "tags": ["render", "3d", "opengl", "mesh", "lighting", "game"]
+}
