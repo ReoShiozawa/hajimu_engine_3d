@@ -5,12 +5,19 @@
   "description": "はじむ用 Unity レベル 3D エンジン — PCF シャドウ・法線マップ・スポット光・フォグ・スカイボックス・パーティクル・シーングラフ・キーフレームアニメ・レイキャスト・ブルーム",
   "license": "MIT",
   "repository": "https://github.com/ReoShiozawa/hajimu_engine_3d",
-  "build": "make",
+  "build": "make build/engine_3d.hjp",
   "output": "build/engine_3d.hjp",
   "install_dir": "~/.hajimu/plugins/engine_3d/",
   "dependencies": {
     "sdl2": ">=2.0",
     "opengl": ">=3.3"
   },
-  "tags": ["render", "3d", "opengl", "mesh", "lighting", "game"]
+  "tags": [
+    "render",
+    "3d",
+    "opengl",
+    "mesh",
+    "lighting",
+    "game"
+  ]
 }
