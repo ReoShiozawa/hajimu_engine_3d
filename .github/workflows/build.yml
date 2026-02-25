@@ -1,0 +1,91 @@
+name: Build & Release engine_3d
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            suffix: macos
+          - os: ubuntu-latest
+            suffix: linux-x64
+          - os: windows-latest
+            suffix: windows-x64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: はじむヘッダーを取得
+        uses: actions/checkout@v4
+        with:
+          repository: ReoShiozawa/hajimu
+          path: _hajimu
+          sparse-checkout: include
+
+      - name: ヘッダーをコピー
+        shell: bash
+        run: mkdir -p include && cp -r _hajimu/include/. include/
+
+      # ── SDL2 インストール ─────────────────────────────
+      - name: SDL2 インストール (macOS)
+        if: runner.os == 'macOS'
+        run: brew install sdl2
+
+      - name: SDL2 インストール (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y libsdl2-dev libgl1-mesa-dev
+
+      # ── macOS / Linux ─────────────────────────────────
+      - name: ビルド (macOS / Linux)
+        if: runner.os != 'Windows'
+        run: |
+          cmake -B build \
+            -DHAJIMU_INCLUDE_DIR=$PWD/include \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+
+      # ── Windows (MSYS2 MINGW64 + SDL2) ────────────────
+      - name: MSYS2 セットアップ (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: false
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            make
+            mingw-w64-x86_64-SDL2
+
+      - name: ビルド (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          cmake -B build \
+            -DHAJIMU_INCLUDE_DIR="$PWD/include" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -G "MinGW Makefiles"
+          cmake --build build
+
+      - name: アーティファクトをリネーム
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp build/engine_3d.hjp dist/engine_3d-${{ matrix.suffix }}.hjp
+
+      - name: GitHub Releases にアップロード
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/engine_3d-${{ matrix.suffix }}.hjp
