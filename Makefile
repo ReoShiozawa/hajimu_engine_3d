@@ -60,3 +60,18 @@ else
 	rm -rf $(INSTALL_DIR)/$(PLUGIN_NAME)
 endif
 	@echo "  アンインストール完了"
+
+# ── クロスプラットフォームビルド (macOS のみ: SDL2非対応のためLinux/Windowsは除外) ──
+DIST        = dist
+
+.PHONY: build-all build-macos
+
+build-all: build-macos
+	@echo "  ビルド完了: $(DIST)/"
+
+build-macos:
+	@mkdir -p $(DIST)
+	cmake -S . -B build_macos -DCMAKE_BUILD_TYPE=Release -Wno-dev
+	cmake --build build_macos -j$(NCPU)
+	cp build_macos/$(PLUGIN_NAME).hjp $(DIST)/$(PLUGIN_NAME)-macos.hjp
+	@echo "  macOS: $(DIST)/$(PLUGIN_NAME)-macos.hjp"
