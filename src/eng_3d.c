@@ -16,10 +16,14 @@
 #ifdef __APPLE__
 #  define GL_SILENCE_DEPRECATION
 #  include <OpenGL/gl3.h>
-#else
+#elif defined(__linux__)
 #  define GL_GLEXT_PROTOTYPES 1
 #  include <GL/gl.h>
 #  include <GL/glext.h>
+#elif defined(_WIN32)
+#  include <SDL2/SDL_opengl.h>
+#  include <SDL2/SDL_opengl_glext.h>
+#  include "win_gl.h"
 #endif
 
 #include <SDL2/SDL.h>
@@ -1158,6 +1162,9 @@ ENG_3D* eng3d_create(const char* title,int w,int h){
     if(!win){fprintf(stderr,"[3D] SDL_CreateWindow: %s\n",SDL_GetError());return NULL;}
     SDL_GLContext gl=SDL_GL_CreateContext(win);
     if(!gl){fprintf(stderr,"[3D] GL: %s\n",SDL_GetError());SDL_DestroyWindow(win);return NULL;}
+#ifdef _WIN32
+    win_gl_load();
+#endif
     SDL_GL_SetSwapInterval(1);
     ENG_3D* ctx=(ENG_3D*)calloc(1,sizeof(ENG_3D));
     ctx->window=win; ctx->gl_ctx=gl; ctx->w=w; ctx->h=h;

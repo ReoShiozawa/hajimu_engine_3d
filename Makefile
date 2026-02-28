@@ -61,13 +61,19 @@ else
 endif
 	@echo "  アンインストール完了"
 
-# ── クロスプラットフォームビルド (macOS のみ: SDL2非対応のためLinux/Windowsは除外) ──
+# ── クロスプラットフォームビルド ──
 DIST        = dist
+HAJIMU_INC  = $(abspath $(firstword $(wildcard ../../jp/include ../jp/include)))
+SDL2_INC    = $(abspath vendor/sdl2/include)
+VENDOR_WIN  = $(abspath vendor/windows)
+LINUX_CC   ?= x86_64-linux-musl-gcc
+WIN_CC     ?= x86_64-w64-mingw32-gcc
+ENG_SRCS    = src/eng_3d.c src/plugin.c
 
-.PHONY: build-all build-macos
+.PHONY: build-all build-macos build-linux build-windows
 
-build-all: build-macos
-	@echo "  ビルド完了: $(DIST)/"
+build-all: build-macos build-linux build-windows
+	@echo "  全プラットフォームビルド完了: $(DIST)/"
 
 build-macos:
 	@mkdir -p $(DIST)
@@ -75,3 +81,24 @@ build-macos:
 	cmake --build build_macos -j$(NCPU)
 	cp build_macos/$(PLUGIN_NAME).hjp $(DIST)/$(PLUGIN_NAME)-macos.hjp
 	@echo "  macOS: $(DIST)/$(PLUGIN_NAME)-macos.hjp"
+
+build-linux:
+	@mkdir -p $(DIST)
+	$(LINUX_CC) -shared -fPIC -O2 -std=gnu11 \
+	  -I$(HAJIMU_INC) -I$(SDL2_INC) -Iinclude -Isrc -Ivendor \
+	  -I/opt/X11/include \
+	  $(ENG_SRCS) \
+	  -Wl,--allow-shlib-undefined \
+	  -o $(DIST)/$(PLUGIN_NAME)-linux-x64.hjp
+	@echo "  Linux: $(DIST)/$(PLUGIN_NAME)-linux-x64.hjp"
+
+build-windows:
+	@mkdir -p $(DIST)
+	$(WIN_CC) -shared -O2 -std=gnu11 \
+	  -D_WIN32_WINNT=0x0601 -DWIN32_LEAN_AND_MEAN \
+	  -I$(HAJIMU_INC) -I$(SDL2_INC) -Iinclude -Isrc -Ivendor \
+	  $(ENG_SRCS) src/win_gl.c \
+	  $(VENDOR_WIN)/lib64/libSDL2.dll.a \
+	  -lopengl32 -lwinmm -lgdi32 -luser32 -lpthread -static-libgcc \
+	  -o $(DIST)/$(PLUGIN_NAME)-windows-x64.hjp
+	@echo "  Windows: $(DIST)/$(PLUGIN_NAME)-windows-x64.hjp"
