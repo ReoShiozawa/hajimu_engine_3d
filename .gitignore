@@ -12,7 +12,3 @@ vendor/
 build_linux/
 build_macos/
 build_win/
-
-build_linux/
-build_macos/
-build_win/
