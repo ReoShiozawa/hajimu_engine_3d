@@ -2,8 +2,7 @@
  * jp-engine_3d  plugin.c  v2.0.0
  * Unity レベル 3D エンジン - はじむプラグインバインディング
  */
-#define GL_SILENCE_DEPRECATION
-#include "../../jp/include/hajimu_plugin.h"
+#include "hajimu_plugin.h"
 #include "../include/eng_3d.h"
 #include <SDL2/SDL_scancode.h>
 
@@ -462,6 +461,8 @@ static HajimuPluginFunc functions[] = {
     {"マウス相対",    p_mouse_relative, 1,1},
     {"キーコード",    p_key_code,     1,1},
 };
+
+HAJIMU_PLUGIN_ABI_EXPORT()
 
 HAJIMU_PLUGIN_EXPORT HajimuPluginInfo* hajimu_plugin_init(void){
     static HajimuPluginInfo info = {

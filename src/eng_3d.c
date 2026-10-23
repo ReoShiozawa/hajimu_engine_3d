@@ -14,7 +14,9 @@
 #include "eng_3d.h"
 
 #ifdef __APPLE__
-#  define GL_SILENCE_DEPRECATION
+#  ifndef GL_SILENCE_DEPRECATION
+#    define GL_SILENCE_DEPRECATION
+#  endif
 #  include <OpenGL/gl3.h>
 #elif defined(__linux__)
 #  define GL_GLEXT_PROTOTYPES 1
@@ -88,12 +90,6 @@ static void  v3_cross(vec3 r, const vec3 a, const vec3 b){
 static float v3_len(const vec3 v){ return sqrtf(v3_dot(v,v)); }
 static void  v3_norm(vec3 v){ float l=v3_len(v); if(l>1e-8f){v[0]/=l;v[1]/=l;v[2]/=l;} }
 static void  v3_sub(vec3 r,const vec3 a,const vec3 b){r[0]=a[0]-b[0];r[1]=a[1]-b[1];r[2]=a[2]-b[2];}
-static void  v3_add(vec3 r,const vec3 a,const vec3 b){r[0]=a[0]+b[0];r[1]=a[1]+b[1];r[2]=a[2]+b[2];}
-static void  v3_scale(vec3 r,const vec3 v,float s){r[0]=v[0]*s;r[1]=v[1]*s;r[2]=v[2]*s;}
-static void  v3_lerp(vec3 r,const vec3 a,const vec3 b,float t){
-    r[0]=a[0]+(b[0]-a[0])*t; r[1]=a[1]+(b[1]-a[1])*t; r[2]=a[2]+(b[2]-a[2])*t;
-}
-
 static void m4_lookat(mat4 m, const vec3 eye, const vec3 at, const vec3 up_hint) {
     vec3 f,s,u;
     v3_sub(f,at,eye); v3_norm(f);

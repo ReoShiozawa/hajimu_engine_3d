@@ -1,4 +1,5 @@
 {
+  "schema_version": 2,
   "name": "engine_3d",
   "version": "2.0.0",
   "author": "Reo Shiozawa",
@@ -6,9 +7,10 @@
   "license": "MIT",
   "repository": "https://github.com/ReoShiozawa/hajimu_engine_3d",
   "build": "make build/engine_3d.hjp",
-  "output": "build/engine_3d.hjp",
+  "entry": "build/engine_3d.hjp",
   "install_dir": "~/.hajimu/plugins/engine_3d/",
-  "dependencies": {
+  "dependencies": {},
+  "system_dependencies": {
     "sdl2": ">=2.0",
     "opengl": ">=3.3"
   },
