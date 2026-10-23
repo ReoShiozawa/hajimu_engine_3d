@@ -22,6 +22,9 @@ set(SRCS
 )
 
 add_library(engine_3d SHARED ${SRCS})
+if(WIN32)
+    target_sources(engine_3d PRIVATE src/win_gl.c)
+endif()
 
 set_target_properties(engine_3d PROPERTIES
     PREFIX  ""

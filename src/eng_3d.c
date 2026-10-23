@@ -1159,10 +1159,19 @@ ENG_3D* eng3d_create(const char* title,int w,int h){
     SDL_GLContext gl=SDL_GL_CreateContext(win);
     if(!gl){fprintf(stderr,"[3D] GL: %s\n",SDL_GetError());SDL_DestroyWindow(win);return NULL;}
 #ifdef _WIN32
-    win_gl_load();
+    if (!win_gl_load()) {
+        SDL_GL_DeleteContext(gl);
+        SDL_DestroyWindow(win);
+        return NULL;
+    }
 #endif
     SDL_GL_SetSwapInterval(1);
     ENG_3D* ctx=(ENG_3D*)calloc(1,sizeof(ENG_3D));
+    if (!ctx) {
+        SDL_GL_DeleteContext(gl);
+        SDL_DestroyWindow(win);
+        return NULL;
+    }
     ctx->window=win; ctx->gl_ctx=gl; ctx->w=w; ctx->h=h;
     ctx->cam_pos[0]=0; ctx->cam_pos[1]=3; ctx->cam_pos[2]=5;
     ctx->fov=60.f; ctx->near_z=0.1f; ctx->far_z=500.f;
