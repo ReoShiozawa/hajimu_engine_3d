@@ -1,6 +1,7 @@
 build/*
 !build/*.hjp
-vendor/
+vendor/*
+!vendor/stb_image.h
 *.dSYM/
 *.o
 *.a
